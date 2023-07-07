@@ -1,6 +1,16 @@
+const NoPermissionError = require("../../errors/noPermissionError");
+const generator = require("../../helpers/generator");
+
 module.exports = ({ req }) => {
-  const user_id = req.headers.authorization;
+  const token = req.headers.authorization;
   return {
-    user_id,
+    validate() {
+      try {
+        const { id } = generator.verifyToken(token);
+        return id;
+      } catch (error) {
+        throw new NoPermissionError("Você não está autenticado!");
+      }
+    },
   };
 };
